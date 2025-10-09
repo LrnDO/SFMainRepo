@@ -1,0 +1,22 @@
+app:
+  image: yurevmn/django-pg-tutorial-v1.1:v1.1
+  replicas: 1
+  port: 3003
+  command: python manage.py migrate && python manage.py runserver 0.0.0.0:3003
+  env:
+    DB_HOST: db
+    DB_NAME: tutorial-dev
+    DB_USER: vinhle
+    DB_PASS: password
+
+db:
+  image: postgres:13-alpine
+  port: 5432
+  storage: 2Gi
+  env:
+    POSTGRES_DB: tutorial-dev
+    POSTGRES_USER: vinhle
+    POSTGRES_PASSWORD: password
+
+service:
+  type: ClusterIP

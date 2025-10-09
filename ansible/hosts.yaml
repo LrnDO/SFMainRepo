@@ -1,0 +1,36 @@
+all:
+  hosts:
+    k8s-master:
+      ansible_host: 192.168.10.22
+      ip: 192.168.10.22
+      access_ip: 192.168.10.22
+      ansible_user: ubuntu
+      ansible_become: true
+    k8s-worker:
+      ansible_host: 192.168.10.16
+      ip: 192.168.10.16
+      access_ip: 192.168.10.16
+      ansible_user: ubuntu
+      ansible_become: true
+
+  children:
+    kube_control_plane:
+      hosts:
+        k8s-master: {}
+
+    kube_node:
+      hosts:
+        k8s-master: {}
+        k8s-worker: {}
+
+    etcd:
+      hosts:
+        k8s-master: {}
+
+    k8s_cluster:
+      children:
+        kube_control_plane: {}
+        kube_node: {}
+
+    calico_rr:
+      hosts: {}

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - >
+              echo "Waiting for database...";
+              until nc -z {{ .Values.app.env.DB_HOST }} 5432;
+              do
+                echo "Database not ready, sleeping...";
+                sleep 2;
+              done;
+              echo "Database is ready!"
+      containers:
+        - name: app
+          image: {{ .Values.app.image }}
+          command:
+            - /bin/sh
+            - -c
+            - "{{ .Values.app.command }}"
+          ports:
+            - containerPort: {{ .Values.app.port }}
+          env:
+            - name: DB_HOST
+              value: {{ .Values.app.env.DB_HOST }}
+            - name: DB_NAME
+              value: {{ .Values.app.env.DB_NAME }}
+            - name: DB_USER
+              value: {{ .Values.app.env.DB_USER }}
+            - name: DB_PASS
+              value: {{ .Values.app.env.DB_PASS }}

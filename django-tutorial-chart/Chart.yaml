@@ -1,0 +1,5 @@
+apiVersion: v2
+name: django-tutorial-chart
+description: Django + PostgreSQL Helm chart (based on docker-compose)
+version: 0.1.0
+appVersion: "1.0.0"
